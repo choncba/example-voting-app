@@ -8,21 +8,22 @@ pipeline {
         stage('build') {
             steps {
                 echo 'Compiling worker file'
-                sleep 2
+                dir('worker'){
+                    sh 'mvn compile'
+                }
             }
-        }
         
         stage('test') {
             steps {
                 echo 'Running Unit Tests on Worker App'
-                sleep 5
+                
             }
         }
         
         stage('package') {
             steps {
                 echo 'Packaging Worker App'
-                sleep 1
+                
             }
         }
     }
