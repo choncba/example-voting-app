@@ -1,5 +1,6 @@
 pipeline {
     agent any
+
     tools{
         maven "Maven 3.6.1"	
     }
@@ -12,6 +13,7 @@ pipeline {
                     sh 'mvn compile'
                 }
             }
+        }
         
         stage('test') {
             steps {
@@ -35,7 +37,7 @@ pipeline {
     post{
         always{
             echo 'Pipeline for Worker App is complete!'
+            }
         }
-    }
     }
 }
