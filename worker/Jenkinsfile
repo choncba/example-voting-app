@@ -37,4 +37,5 @@ pipeline {
             echo 'Pipeline for Worker App is complete!'
         }
     }
+    }
 }
