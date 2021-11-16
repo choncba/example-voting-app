@@ -1,0 +1,40 @@
+/*
+LFS261
+Jenkisnsfile del ejemplo de una app java Instavote - Parte Result App en NodeJS
+https://github.com/choncba/example-voting-app
+*/
+pipeline {
+    agent any   // Utiliza cualquier worker activo
+
+    tools{
+        maven "NodeJS 8.9.0"	 // Defino la herramienta a utilizar
+    }
+    
+    stages {                                    // Defino las etapas
+        stage('install-tool') {
+            when{                               // Ejecuto en cualquier branch, pero
+                changeset '**/result/**'        // Solo se ejecuta si hago cambios en la carpeta result
+            }
+            steps {                             // primera etapa, compilar
+                echo 'Compiling result App...'
+                dir('result'){                  // Cambio al directorio result
+                    sh 'npm install'            // instalo nodejs
+                }
+            }
+        }
+        
+        stage('test') {                         // Segunda etapa, test
+            when{
+                changeset '**/result/**'        // Solo se ejecuta si hago cambios en la carpeta result
+            }
+            steps {
+                echo 'Running Unit Tests on result App...'
+                dir('result'){
+                    sh 'npm install'
+                    sh 'npm test'
+                }
+            }
+        }
+    }
+}
+
