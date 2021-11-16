@@ -1,21 +1,32 @@
+/*
+LFS261
+Jenkisnsfile del ejemplo de una app java Instavote
+https://github.com/choncba/example-voting-app
+*/
 pipeline {
-    agent any
+    agent any   // Utiliza cualquier worker activo
 
     tools{
-        maven "Maven 3.6.1"	
+        maven "Maven 3.6.1"	 // Defino la herramienta a utilizar
     }
     
-    stages {
+    stages {                                    // Defino las etapas
         stage('build') {
-            steps {
+            when{                               // Ejecuto en cualquier branch, pero
+                changeset '**/worker/**'        // Solo se ejecuta si hago cambios en la carpeta worker
+            }
+            steps {                             // primera etapa, compilar
                 echo 'Compiling worker file'
-                dir('worker'){
-                    sh 'mvn compile'
+                dir('worker'){                  // Cambio al directorio worker
+                    sh 'mvn compile'            // Comando compilar de maven desde SH
                 }
             }
         }
         
-        stage('test') {
+        stage('test') {                         // Segunda etapa, test
+            when{
+                changeset '**/worker/**'        // Solo se ejecuta si hago cambios en la carpeta worker
+            }
             steps {
                 echo 'Running Unit Tests on Worker App'
                 dir('worker'){
@@ -24,19 +35,24 @@ pipeline {
             }
         }
         
-        stage('package') {
+        stage('package') {                      // tercera etapa, package, genera los archivos .jar
+            when{
+                branch 'master'                 // Esto evita que se genere el package si no se trata del branch master,
+                                                // si es otro, es solo para pruebas
+                changeset '**/worker/**'        // Solo se ejecuta si hago cambios en la carpeta worker
+            }
             steps {
                 echo 'Packaging Worker App'
                 dir('worker'){
                     sh 'mvn package -DskipTests'
+                    archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
                 }
             }
         }
     }
     
-    post{
-        always{
-            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+    post{                                       // Post implementación
+        always{                                 // Indica ejecuatar siempre
             echo 'Pipeline for Worker App is complete!'
         }
     }
