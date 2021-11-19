@@ -7,7 +7,7 @@ pipeline {
     agent{
         docker {
             image "maven:3.6.1-jdk-8-alpine"
-            args "-v $HOME/.m2:/root/.m2"   // Para que no descargue de internet la imagen cada vez que la usemos
+            args '-v $HOME/.m2:/root/.m2'   // Para que no descargue de internet la imagen cada vez que la usemos
         }
     }
 
