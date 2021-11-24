@@ -5,11 +5,11 @@ Ahora configurado para compilar con una imahen de nodejs en lugar de instalar la
 https://github.com/choncba/example-voting-app
 */
 pipeline {
-agent {
-    docker{
-        image: 'node:8.16-alpine'
+    agent {
+        docker{
+            image 'node:8.16-alpine'
+        }
     }
-}
     
     stages {                                    // Defino las etapas
         stage('install-tool') {
