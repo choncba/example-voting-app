@@ -7,6 +7,7 @@ pipeline {
     agent {
         docker{
             image 'python:2.7.16-slim'
+            args '-u root' // Permite que pip instale paquetes dentro del contenedor
         }
     }
     
@@ -35,7 +36,7 @@ pipeline {
             }
         }
     }
-    
+
     post{                                       // Post implementación
     always{                                 // Indica ejecuatar siempre
             echo 'Pipeline for Vote App is complete!'
