@@ -38,8 +38,8 @@ pipeline {
         
         stage('package') {                      // tercera etapa, package, genera los archivos .jar
             when{
-                branch 'master'                 // Esto evita que se genere el package si no se trata del branch master,
-                                                // si es otro, es solo para pruebas
+                // branch 'master'                 // Esto evita que se genere el package si no se trata del branch master,
+                //                                 // si es otro, es solo para pruebas
                 changeset '**/worker/**'        // Solo se ejecuta si hago cambios en la carpeta worker
             }
             steps {
