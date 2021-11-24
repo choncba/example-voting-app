@@ -18,7 +18,7 @@ pipeline {
             steps {                             // primera etapa, compilar
                 echo 'Building vote App...'
                 dir('vote'){                  // Cambio al directorio result
-                    sh 'pip install -i requirements.txt'            // instalo los requerimientos
+                    sh 'pip install -r requirements.txt'            // instalo los requerimientos
                 }
             }
         }
@@ -33,6 +33,12 @@ pipeline {
                     sh 'nosetests -v'
                 }
             }
+        }
+    }
+    
+    post{                                       // Post implementación
+    always{                                 // Indica ejecuatar siempre
+            echo 'Pipeline for Vote App is complete!'
         }
     }
 }
