@@ -1,14 +1,15 @@
 /*
 LFS261
 Jenkisnsfile del ejemplo de una app java Instavote - Parte Result App en NodeJS
+Ahora configurado para compilar con una imahen de nodejs en lugar de instalar las herramientas en el host de jenkins
 https://github.com/choncba/example-voting-app
 */
 pipeline {
-    agent any   // Utiliza cualquier worker activo
-
-    tools{
-        maven "NodeJS 8.9.0"	 // Defino la herramienta a utilizar
+agent {
+    docker{
+        image: 'node:8.16-alpine'
     }
+}
     
     stages {                                    // Defino las etapas
         stage('install-tool') {
