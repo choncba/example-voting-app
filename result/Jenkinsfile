@@ -1,0 +1,41 @@
+/*
+LFS261
+Jenkisnsfile del ejemplo de una app java Instavote - Parte Result App en NodeJS
+Ahora configurado para compilar con una imahen de nodejs en lugar de instalar las herramientas en el host de jenkins
+https://github.com/choncba/example-voting-app
+*/
+pipeline {
+    agent {
+        docker{
+            image 'node:8.16-alpine'
+        }
+    }
+    
+    stages {                                    // Defino las etapas
+        stage('install-tool') {
+            when{                               // Ejecuto en cualquier branch, pero
+                changeset '**/result/**'        // Solo se ejecuta si hago cambios en la carpeta result
+            }
+            steps {                             // primera etapa, compilar
+                echo 'Compiling result App...'
+                dir('result'){                  // Cambio al directorio result
+                    sh 'npm install'            // instalo nodejs
+                }
+            }
+        }
+        
+        stage('test') {                         // Segunda etapa, test
+            when{
+                changeset '**/result/**'        // Solo se ejecuta si hago cambios en la carpeta result
+            }
+            steps {
+                echo 'Running Unit Tests on result App...'
+                dir('result'){
+                    sh 'npm install'
+                    sh 'npm test'
+                }
+            }
+        }
+    }
+}
+

@@ -1,0 +1,46 @@
+/*
+LFS261
+Jenkisnsfile del ejemplo de una app java Instavote - Parte App Vote en Python
+https://github.com/choncba/example-voting-app
+*/
+pipeline {
+    agent {
+        docker{
+            image 'python:2.7.16-slim'
+            args '-u root' // Permite que pip instale paquetes dentro del contenedor
+        }
+    }
+    
+    stages {                                    // Defino las etapas
+        stage('build') {
+            when{                               // Ejecuto en cualquier branch, pero
+                changeset '**/vote/**'        // Solo se ejecuta si hago cambios en la carpeta vote
+            }
+            steps {                             // primera etapa, compilar
+                echo 'Building vote App...'
+                dir('vote'){                  // Cambio al directorio result
+                    sh 'pip install -r requirements.txt'            // instalo los requerimientos
+                }
+            }
+        }
+        
+        stage('test') {                         // Segunda etapa, test
+            when{
+                changeset '**/vote/**'        // Solo se ejecuta si hago cambios en la carpeta result
+            }
+            steps {
+                echo 'Running Nose Tests on vote App...'
+                dir('vote'){
+                    sh 'nosetests -v'
+                }
+            }
+        }
+    }
+
+    post{                                       // Post implementación
+    always{                                 // Indica ejecuatar siempre
+            echo 'Pipeline for Vote App is complete!'
+        }
+    }
+}
+
