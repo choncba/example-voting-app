@@ -1,14 +1,13 @@
 # Dockerfile for result app
 
-FROM node:8.16.0-alpine
+FROM maven:3.6.1-jdk-14
 
 WORKDIR /app 
 
 COPY . . 
 
-RUN npm install  && \ 
-    npm audit fix 
-    
-EXPOSE 4000
+RUN mvn package && \
+    mv target/worker-jar-with-dependencies.jar /run/worker.jar && \
+    rm -rf /app/*
 
-CMD npm start 
+CMD java -jar /run/worker.jar
