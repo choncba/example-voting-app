@@ -4,15 +4,25 @@ Jenkisnsfile del ejemplo de una app java Instavote
 https://github.com/choncba/example-voting-app
 */
 pipeline {
-    agent{
-        docker {
-            image "maven:3.6.1-jdk-8-alpine"
-            args '-v $HOME/.m2:/root/.m2'   // Para que no descargue de internet la imagen cada vez que la usemos
-        }
-    }
+    // agent{
+    //     docker {
+    //         image "maven:3.6.1-jdk-8-alpine"
+    //         args '-v $HOME/.m2:/root/.m2'   // Para que no descargue de internet la imagen cada vez que la usemos
+    //     }
+    // }
+    // *** Como agrego el stage docker-package, ya que ahora quiero que el proceso de compilacion lo realice en un contenedor, 
+    // y se cree aparte otro contenedor para correr la app, necesito definir el agente por cada stage individualmente, 
+    // por eso comento lo anterior y agrego el agente en cada stage
+    agent none 
 
     stages {                                    // Defino las etapas
         stage('build') {
+            agent{
+                docker {
+                    image "maven:3.6.1-jdk-8-alpine"
+                    args '-v $HOME/.m2:/root/.m2'   // Para que no descargue de internet la imagen cada vez que la usemos
+                }
+            }
             when{                               // Ejecuto en cualquier branch, pero
                 changeset '**/worker/**'        // Solo se ejecuta si hago cambios en la carpeta worker
             }
@@ -25,6 +35,12 @@ pipeline {
         }
         
         stage('test') {                         // Segunda etapa, test
+            agent{
+                docker {
+                    image "maven:3.6.1-jdk-8-alpine"
+                    args '-v $HOME/.m2:/root/.m2'   // Para que no descargue de internet la imagen cada vez que la usemos
+                }
+            }
             when{
                 changeset '**/worker/**'        // Solo se ejecuta si hago cambios en la carpeta worker
             }
@@ -37,6 +53,12 @@ pipeline {
         }
         
         stage('package') {                      // tercera etapa, package, genera los archivos .jar
+            agent{
+                docker {
+                    image "maven:3.6.1-jdk-8-alpine"
+                    args '-v $HOME/.m2:/root/.m2'   // Para que no descargue de internet la imagen cada vez que la usemos
+                }
+            }
             when{
                 // branch 'master'                 // Esto evita que se genere el package si no se trata del branch master,
                 //                                 // si es otro, es solo para pruebas
@@ -54,6 +76,10 @@ pipeline {
         // En este stage convierto el resultado en un nuevo contenedor listo para ser ejecutado
         // Y luego publicarlo en mi dockerhub
         stage('docker-package'){
+            agent any // PORQUE QUIERO EJECUTAR DIRECTAMENTE ESTO EN EL HOST
+            when{
+                changeset '**/worker/**'        // Solo se ejecuta si hago cambios en la carpeta worker
+            }
             steps{
               echo 'Packaging worker app with docker'
               // Agrego un script dentro del pipeline 
