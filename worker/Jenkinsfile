@@ -50,6 +50,27 @@ pipeline {
                 }
             }
         }
+
+        // En este stage convierto el resultado en un nuevo contenedor listo para ser ejecutado
+        // Y luego publicarlo en mi dockerhub
+        stage('docker-package'){
+            steps{
+              echo 'Packaging worker app with docker'
+              // Agrego un script dentro del pipeline 
+              script{
+                // Me logueo a dockerhub https://docs.docker.com/engine/reference/commandline/login/
+                // dockerhublogin es el nombre de la credencial creada en Jenkins con mis datos de dockerhub
+                // Desde el menu del item de Jenkins (Instavote) ir a credentials -> Folder -> Global Credentials y agrego la nueva credencial
+                docker.withRegistry('https://index.docker.io/v1/', 'dockerhublogin') {
+                    // hago el Build con el Dockerfile
+                    def workerImage = docker.build("lrbono/worker:v${env.BUILD_ID}", "./worker")
+                    workerImage.push()
+                    // Publico en Dockerhub
+                    workerImage.push("latest")
+                }
+              }
+            }
+        }
     }
     
     post{                                       // Post implementación
