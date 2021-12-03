@@ -76,9 +76,10 @@ pipeline {
         // En este stage convierto el resultado en un nuevo contenedor listo para ser ejecutado
         // Y luego publicarlo en mi dockerhub
         stage('docker-package'){
-            agent any // PORQUE QUIERO EJECUTAR DIRECTAMENTE ESTO EN EL HOST
+            agent any // PORQUE QUIERO EJECUTAR DIRECTAMENTE ESTO EN EL HOST, NO dentro del contenedor que compila
             when{
                 changeset '**/worker/**'        // Solo se ejecuta si hago cambios en la carpeta worker
+                branch 'master'                 // Solo se genera la imagen para el branch master
             }
             steps{
               echo 'Packaging worker app with docker'
@@ -92,7 +93,7 @@ pipeline {
                     def workerImage = docker.build("lrbono/worker:v${env.BUILD_ID}", "./worker")
                     workerImage.push()
                     // Publico en Dockerhub
-                    workerImage.push("latest")
+                    workerImage.push("${env.BRANCH_NAME}")
                 }
               }
             }
