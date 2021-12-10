@@ -79,7 +79,7 @@ pipeline {
             agent any // PORQUE QUIERO EJECUTAR DIRECTAMENTE ESTO EN EL HOST, NO dentro del contenedor que compila
             when{
                 changeset '**/worker/**'        // Solo se ejecuta si hago cambios en la carpeta worker
-                //branch 'master'                 // Solo se genera la imagen para el branch master
+                branch 'master'                 // Solo se genera la imagen para el branch master
             }
             steps{
               echo 'Packaging worker app with docker'
