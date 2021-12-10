@@ -5,14 +5,21 @@ Ahora configurado para compilar con una imahen de nodejs en lugar de instalar la
 https://github.com/choncba/example-voting-app
 */
 pipeline {
-    agent {
-        docker{
-            image 'node:8.16-alpine'
-        }
-    }
+    // agent {
+    //     docker{
+    //         image 'node:8.16-alpine'
+    //     }
+    // }
     
+    agent none
+
     stages {                                    // Defino las etapas
         stage('install-tool') {
+            agent {
+                docker{
+                    image 'node:8.16-alpine'
+                }
+            }
             when{                               // Ejecuto en cualquier branch, pero
                 changeset '**/result/**'        // Solo se ejecuta si hago cambios en la carpeta result
             }
@@ -25,6 +32,11 @@ pipeline {
         }
         
         stage('test') {                         // Segunda etapa, test
+            agent {
+                docker{
+                    image 'node:8.16-alpine'
+                }
+            }            
             when{
                 changeset '**/result/**'        // Solo se ejecuta si hago cambios en la carpeta result
             }
@@ -36,6 +48,24 @@ pipeline {
                 }
             }
         }
+
+        stage('docker-package'){
+            agent any 
+            when{
+                changeset '**/result/**'  
+                //branch 'master'         
+            }
+            steps{
+              echo 'Packaging vote app with docker'
+              script{
+                docker.withRegistry('https://index.docker.io/v1/', 'dockerhublogin') {
+                    def workerImage = docker.build("lrbono/result:v${env.BUILD_ID}", "./result")
+                    workerImage.push()
+                    workerImage.push("${env.BRANCH_NAME}")
+                }
+              }
+            }
+        }        
     }
 }
 
