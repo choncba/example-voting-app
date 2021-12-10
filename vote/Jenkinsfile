@@ -44,6 +44,7 @@ pipeline {
             steps {
                 echo 'Running Nose Tests on vote App...'
                 dir('vote'){
+                    sh 'pip install -r requirements.txt'            // instalo los requerimientos
                     sh 'nosetests -v'
                 }
             }
