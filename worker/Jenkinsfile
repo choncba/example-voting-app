@@ -74,7 +74,7 @@ pipeline {
         }
 
         // En este stage convierto el resultado en un nuevo contenedor listo para ser ejecutado
-        // Y luego publicarlo en mi dockerhub
+        // Y luego publicarlo en mi dockerhub. Utiliza el Dockerfile para la imagen
         stage('docker-package'){
             agent any // PORQUE QUIERO EJECUTAR DIRECTAMENTE ESTO EN EL HOST, NO dentro del contenedor que compila
             when{
