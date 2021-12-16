@@ -1,0 +1,63 @@
+version: '3.7'
+
+volumes:
+  db-data:          # creo un volumen para la info de la db
+
+networks:
+  instavote:        # Creo una red aislada para la app
+    driver: bridge
+
+services:
+  # Archivo docker-compose para hacer el deploy de la app instavote
+  vote:                         # Defino el nombre del servicio
+    image: lrbono/vote:master   # Defino la imagen a usar
+    ports:                      # Defino el/los puertos a direccionar
+      - 5000:80
+    depends_on:
+      - redis
+    networks:
+      - instavote
+    
+    # NO SE USA EN LAS NUEVAS VERSIONES:
+    # links:
+    #   - redis:redis            # Agrego el link a redis, definido como "redis" en la app Python de la app vote
+    # # Lo que hace el link es agregar en el contenedor de "vote" el hostname con la ip del contenedor 
+    # # con el nombre "redis" en /etc/hosts
+
+  #### Servicios Necesarios para ejecutar la app -> Buscar en Dockerhub
+  redis:
+    image: redis:alpine
+    networks:
+      - instavote    
+
+  db:
+    image: postgres:9.4
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - instavote      
+
+  result:
+    image: lrbono/result:master
+    ports:
+      - 5001:4000
+    depends_on:
+      - db
+    networks:
+      - instavote      
+    # links:
+    #   - db:db 
+
+  worker:
+    image: lrbono/worker:master
+    depends_on:
+      - db
+      - redis
+    networks:
+      - instavote      
+    # links:
+    #   - redis:redis
+    #   - db:db            # Agrego el link a la db, definida como "db" en la app Java de la app worker
+
