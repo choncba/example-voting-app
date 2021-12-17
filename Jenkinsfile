@@ -2,6 +2,7 @@
 LFS261
 Jenkisnsfile Global del proyecto
 Creo un unico pipeline para las 3 apps
+
 */
 pipeline {
     agent none 
