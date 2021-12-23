@@ -146,7 +146,7 @@ pipeline {
               script{
                 docker.withRegistry('https://index.docker.io/v1/', 'dockerhublogin') {
                     // hago el Build con el Dockerfile
-                    def workerImage = docker.build("lrbono/worker:v${env.BUILD_ID}", "./worker")
+                    def workerImage = docker.build("lrbono/worker:v${env.BUILD_NUMBER}", "./worker")
                     workerImage.push()
                     // Publico en Dockerhub
                     workerImage.push("${env.BRANCH_NAME}")
