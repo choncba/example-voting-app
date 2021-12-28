@@ -192,16 +192,16 @@ pipeline {
         }
 
         // Este stage hace el deploy de todas las partes de la app usando el docker-compose
-        stage('deploy to dev'){
-            agent any
-            when{
-                branch 'feature/monopipe'
-            }
-            steps{
-                echo 'Deploy instavote app with docker compose'
-                sh 'docker-compose up -d'
-            }
-        } 
+        // stage('deploy to dev'){
+        //     agent any
+        //     when{
+        //         branch 'feature/monopipe'
+        //     }
+        //     steps{
+        //         echo 'Deploy instavote app with docker compose'
+        //         sh 'docker-compose up -d'
+        //     }
+        // } 
     }
     
     post{                                       // Post implementación
