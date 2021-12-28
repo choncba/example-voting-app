@@ -202,6 +202,7 @@ pipeline {
     }
 
     stage('deploy-to-dev-from-blueocean') {
+      agent any
       steps {
         sh 'docker-compose up -d'
       }
