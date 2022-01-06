@@ -146,7 +146,7 @@ pipeline {
       agent any
       when {
         changeset '**/worker/**'
-        branch 'feature/monopipe'
+        branch 'master'
       }
       steps {
         echo 'Packaging worker app with docker'
@@ -167,7 +167,7 @@ pipeline {
       agent any
       when {
         changeset '**/vote/**'
-        branch 'feature/monopipe'
+        branch 'master'
       }
       steps {
         echo 'Packaging vote app with docker'
@@ -186,7 +186,7 @@ pipeline {
       agent any
       when {
         changeset '**/result/**'
-        branch 'feature/monopipe'
+        branch 'master'
       }
       steps {
         echo 'Packaging result app with docker'
