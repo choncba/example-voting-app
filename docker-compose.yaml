@@ -10,9 +10,11 @@ networks:
 services:
   # Archivo docker-compose para hacer el deploy de la app instavote
   vote:                         # Defino el nombre del servicio
-    image: lrbono/vote:master   # Defino la imagen a usar
+    #image: lrbono/vote:master   # Defino la imagen a usar desde dockerhub
+    image: lrbono/vote:latest   # Cuando uso Build, lo taggea como latest
+    build: ./vote               # Busca el dockerfile de la carpeta vote y genera el contenedor con docker-compose build
     ports:                      # Defino el/los puertos a direccionar
-      - 5000:80
+      - 12000:80
     depends_on:
       - redis
     networks:
@@ -40,9 +42,11 @@ services:
       - instavote      
 
   result:
-    image: lrbono/result:master
+    #image: lrbono/result:master
+    image: lrbono/result:latest
+    build: ./result
     ports:
-      - 5001:4000
+      - 12001:4000
     depends_on:
       - db
     networks:
@@ -51,7 +55,9 @@ services:
     #   - db:db 
 
   worker:
-    image: lrbono/worker:master
+    #image: lrbono/worker:master
+    image: lrbono/worker:latest
+    build: ./worker
     depends_on:
       - db
       - redis
